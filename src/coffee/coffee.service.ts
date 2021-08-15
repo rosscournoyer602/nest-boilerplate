@@ -1,23 +1,21 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Coffee } from './entities/coffee.entity';
 
 @Injectable()
 export class CoffeeService {
-  private coffees: Coffee[] = [
-    {
-      id: 1,
-      name: 'Shipwreck Roast',
-      brand: 'Buddy Brew',
-      flavors: ['chocolate', 'vanilla']
-    }
-  ];
+  constructor(
+    @InjectRepository(Coffee)
+    private readonly coffeeRepository: Repository<Coffee>
+  ) {}
 
   findAll() {
-    return this.coffees;
+    return this.coffeeRepository.find();
   }
 
   findOne(id: string) {
-    const coffee = this.coffees.find(item => item.id === +id);
+    const coffee = this.coffeeRepository.findOne(id);
     if (!coffee) {
       throw new NotFoundException(`Coffee #${id} not found`);
     } else {
@@ -26,21 +24,16 @@ export class CoffeeService {
   }
 
   create(createCoffeeDto: any) {
-    this.coffees.push(createCoffeeDto);
+    this.coffeeRepository.save(createCoffeeDto);
     return createCoffeeDto;
   }
 
   update(id: string, updateCoffeeDto: any) {
-    const existingCoffee = this.findOne(id);
-    if (existingCoffee) {
-      // update
-    }
+    this.coffeeRepository.update(id, updateCoffeeDto)
+
   }
 
   remove(id: string) {
-    const coffeeIndex = this.coffees.findIndex(item => item.id === +id);
-    if (coffeeIndex >= 0) {
-      this.coffees.splice(coffeeIndex, 1);
-    }
+    this.coffeeRepository.delete(id);
   }
 }
