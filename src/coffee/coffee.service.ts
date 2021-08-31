@@ -20,11 +20,11 @@ export class CoffeeService {
   ) {}
 
   async findAll(paginationQuery: PaginationQueryDto) {
-    const { limit, offset } =  paginationQuery;
+    const { limit, offset } = paginationQuery;
     return await this.coffeeRepository.find({
       relations: ["flavors"],
       skip: offset,
-      take: limit
+      take: limit,
     });
   }
 
@@ -41,20 +41,25 @@ export class CoffeeService {
 
   async create(createCoffeeDto: any) {
     const flavors = await Promise.all(
-      createCoffeeDto.flavors.map(name => this.preloadFlavorByName(name))
+      createCoffeeDto.flavors.map((name) => this.preloadFlavorByName(name)),
     );
-    const coffee = this.coffeeRepository.create({ ...createCoffeeDto, flavors });
+    const coffee = this.coffeeRepository.create({
+      ...createCoffeeDto,
+      flavors,
+    });
     return this.coffeeRepository.save(coffee);
   }
 
   async update(id: string, updateCoffeeDto: any) {
-    const flavors = updateCoffeeDto.flavors && await Promise.all(
-      updateCoffeeDto.flavors.map(name => this.preloadFlavorByName(name))
-    );
+    const flavors =
+      updateCoffeeDto.flavors &&
+      (await Promise.all(
+        updateCoffeeDto.flavors.map((name) => this.preloadFlavorByName(name)),
+      ));
     const coffee = await this.coffeeRepository.preload({
       id: +id,
       ...updateCoffeeDto,
-      flavors
+      flavors,
     });
     if (!coffee) {
       throw new NotFoundException(`Coffee #${id} not found`);

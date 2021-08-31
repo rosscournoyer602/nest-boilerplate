@@ -13,4 +13,4 @@ export class Flavors {
     cascade: true,
   })
   coffee: Coffee[];
-} 
+}
