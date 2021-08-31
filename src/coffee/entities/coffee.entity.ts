@@ -4,7 +4,6 @@ import {
   JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
-  Unique,
 } from "typeorm";
 import { Flavors } from "../../flavors/entities/flavor.entity";
 
