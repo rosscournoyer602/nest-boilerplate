@@ -8,7 +8,7 @@ import {
   Delete,
   Query,
 } from "@nestjs/common";
-import { PaginationQueryDto } from "src/common/dto/pagination-query.dto";
+import { PaginationQueryDto } from "../common/dto/pagination-query.dto";
 import { CoffeeService } from "./coffee.service";
 import { CreateCoffeeDto } from "./dto/create-coffee.dto";
 import { UpdateCoffeeDto } from "./dto/update-coffee.dto";
@@ -40,7 +40,7 @@ export class CoffeeController {
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string, @Body() body) {
+  remove(@Param("id") id: string) {
     this.coffeeService.remove(id);
     return `Delete coffee ${id}`;
   }
