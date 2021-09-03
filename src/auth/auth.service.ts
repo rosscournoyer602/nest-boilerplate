@@ -51,7 +51,7 @@ export class AuthService {
     });
   }
 
-  private generateToken(username: string) {
+  generateToken(username: string) {
     const timestamp = new Date().getTime() / 1000;
     return jwt.encode(
       { sub: username, iat: timestamp },

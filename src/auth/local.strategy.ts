@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import bcrypt from "bcrypt";
+const bcrypt = require("bcrypt");
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -15,22 +15,28 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(username: string, password): Promise<any> {
-    const user = await this.authService.findOne(username);
-    if (!user) {
-      throw new UnauthorizedException({ description: "Invalid Username" });
-    }
-    bcrypt.compare(password, user.password, (err, compare: boolean) => {
-      if (err) {
-        throw new InternalServerErrorException({
-          description: "Failed to validate password",
-        });
+    return new Promise(async (resolve, reject) => {
+      const user = await this.authService.findOne(username);
+      if (!user) {
+        reject(new UnauthorizedException({ description: "Invalid Username" }));
       }
-      if (compare !== true) {
-        throw new UnauthorizedException({ description: "Invalid Password" });
-      }
-      if (compare === true) {
-        return user;
-      }
+      bcrypt.compare(password, user.password, (err, compare: boolean) => {
+        if (err) {
+          reject(
+            new InternalServerErrorException({
+              description: "Failed to validate password",
+            }),
+          );
+        }
+        if (compare !== true) {
+          reject(
+            new UnauthorizedException({ description: "Invalid Password" }),
+          );
+        }
+        if (compare === true) {
+          resolve(user);
+        }
+      });
     });
   }
 }
