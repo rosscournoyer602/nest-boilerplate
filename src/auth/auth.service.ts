@@ -23,30 +23,37 @@ export class AuthService {
 
   async create(user: CreateAuthDto) {
     const { username } = user;
-    const existingUser = await this.authRepository.findOne({ username });
-    if (user.password !== user.confirmPassword) {
-      throw new BadRequestException({
-        message: "Passwords do not match",
-      });
-    }
-    if (existingUser) {
-      throw new BadRequestException({
-        description: "User name already in use",
-      });
-    }
-    return new Promise((resolve) => {
+    return new Promise(async (resolve, reject) => {
+      const existingUser = await this.authRepository.findOne({ username });
+      if (user.password !== user.confirmPassword) {
+        reject(
+          new BadRequestException({
+            message: "Passwords do not match",
+          }),
+        );
+      }
+      if (existingUser) {
+        reject(
+          new BadRequestException({
+            description: "User name already in use",
+          }),
+        );
+      }
       bcrypt.hash(user.password, 10, (err, hash) => {
         if (err) {
-          throw new InternalServerErrorException({
-            description: "Error occured when hashing user password",
+          reject(
+            new InternalServerErrorException({
+              description: "Error occured when hashing user password",
+            }),
+          );
+        } else {
+          this.authRepository.save({
+            username,
+            password: hash,
           });
+          const token = this.generateToken(username);
+          resolve({ token });
         }
-        this.authRepository.save({
-          username,
-          password: hash,
-        });
-        const token = this.generateToken(username);
-        resolve({ token });
       });
     });
   }

@@ -33,12 +33,13 @@ export class AppController {
   }
 
   @Post("auth/register")
-  async register(@Request() req) {
+  async register(@Request() req, @Response() res) {
     const { body } = req;
     try {
-      return await this.authService.create(body);
+      const token = await this.authService.create(body);
+      res.status(201).send(token);
     } catch (err) {
-      return err;
+      res.status(400).send(err);
     }
   }
 }
