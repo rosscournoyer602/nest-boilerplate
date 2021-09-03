@@ -39,7 +39,7 @@ export class AuthService {
           }),
         );
       }
-      bcrypt.hash(user.password, 10, (err, hash) => {
+      bcrypt.hash(user.password, 10, async (err, hash) => {
         if (err) {
           reject(
             new InternalServerErrorException({
@@ -47,12 +47,12 @@ export class AuthService {
             }),
           );
         } else {
-          this.authRepository.save({
+          const user = await this.authRepository.save({
             username,
             password: hash,
           });
           const token = this.generateToken(username);
-          resolve({ token });
+          resolve({ user: user.username, token });
         }
       });
     });
