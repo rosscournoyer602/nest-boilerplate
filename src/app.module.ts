@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { CoffeeModule } from "./coffee/coffee.module";
 import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { FlavorsModule } from "./flavors/flavors.module";
+import { AuthModule } from "./auth/auth.module";
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -24,10 +24,8 @@ import { FlavorsModule } from "./flavors/flavors.module";
       },
       inject: [ConfigService],
     }),
-    CoffeeModule,
-    FlavorsModule,
+    AuthModule,
   ],
-
   controllers: [AppController],
   providers: [AppService],
 })
