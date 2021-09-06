@@ -7,7 +7,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @UseGuards(AuthGuard("local"))
-  @Post("auth/login")
+  @Post("login")
   async login(@Request() req) {
     try {
       return { token: this.authService.generateToken(req.body.username) };
@@ -16,7 +16,7 @@ export class AuthController {
     }
   }
 
-  @Post("auth/register")
+  @Post("register")
   async register(@Request() req, @Response() res) {
     const { body } = req;
     try {

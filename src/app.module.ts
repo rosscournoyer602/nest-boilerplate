@@ -4,6 +4,7 @@ import { AppService } from "./app.service";
 import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AuthModule } from "./auth/auth.module";
+import { JwtStrategy } from "./auth/jwt.strategy";
 
 @Module({
   imports: [
@@ -27,6 +28,6 @@ import { AuthModule } from "./auth/auth.module";
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, JwtStrategy],
 })
 export class AppModule {}

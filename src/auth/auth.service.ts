@@ -28,7 +28,7 @@ export class AuthService {
       if (user.password !== user.confirmPassword) {
         reject(
           new BadRequestException({
-            message: "Passwords do not match",
+            description: "Passwords do not match",
           }),
         );
       }
@@ -60,8 +60,9 @@ export class AuthService {
 
   generateToken(username: string) {
     const timestamp = new Date().getTime() / 1000;
+    const exp = Math.round(Date.now() / 1000 + 5 * 60 * 60);
     return jwt.encode(
-      { sub: username, iat: timestamp },
+      { sub: username, iat: timestamp, exp },
       process.env.JWT_SECRET,
     );
   }
