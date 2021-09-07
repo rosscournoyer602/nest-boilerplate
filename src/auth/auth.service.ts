@@ -25,6 +25,7 @@ export class AuthService {
     const { username } = user;
     return new Promise(async (resolve, reject) => {
       const existingUser = await this.authRepository.findOne({ username });
+      console.log("EXISTING USER", existingUser);
       if (user.password !== user.confirmPassword) {
         reject(
           new BadRequestException({
@@ -63,7 +64,7 @@ export class AuthService {
     const exp = Math.round(Date.now() / 1000 + 5 * 60 * 60);
     return jwt.encode(
       { sub: username, iat: timestamp, exp },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || "test",
     );
   }
 }
